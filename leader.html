@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Duck</title>
+  <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<center>
+    <img src="https://em-content.zobj.net/source/telegram/386/trophy_1f3c6.webp" width="300vw" style="margin-top: 8vw">
+</center>
+    <h2>Leaders:</h2>
+  <div class="lider" id="leaderboard">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-body">
+      </tbody>
+    </table>
+  </div>
+
+<div class="bar">
+    <a href="task.html">
+      <button class="task">Task</button>
+    </a>
+    <a href="index.html">
+      <img src="https://i.postimg.cc/m2LgHckR/istockphoto-1215337728-612x612.jpg" width="50px" style="position: absolute; margin-top: -5vw; margin-left: 8vw;">
+        <button class="game">Game</button>
+    </a>
+    <a href="leader.html">
+        <button class="soon"><b>Leaders</b></button>
+    </a>
+</div>
+
+<style>
+    body {
+      font-family:  Geologica;
+      background-color : black;
+       color: white;
+      touch-action: none;
+    }
+    #leaderboard {
+      width: 100%;
+      height: 100%;
+      margin-top: 10vw;
+      text-align: center;
+    }
+    #leaderboard table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #leaderboard th, #leaderboard td {
+      padding: 10px;
+      border: 1px solid #000000;
+      text-align: left;
+    }
+    h2 {
+        margin-top: -5vw;
+        position: absolute;
+    }
+    .bar {
+    background-color: rgb(0, 0, 0);
+    bottom: 0;
+    width: 150%;
+    height: 80px;
+    position: fixed;
+    margin-left: -19px;
+}
+.task {
+    background-color: rgb(0, 0, 0);
+    width: 33vw;
+    height: 20vw;
+    border: none;
+    font-family: Geologica;
+    color: white;
+    margin-left: 2vw;
+}
+.game {
+    background-color: rgb(0, 0, 0);
+    width: 33vw;
+    height: 20vw;
+    border: none;
+    font-family: Geologica;
+    color: white;
+    margin-left: -2vw;
+}
+.soon{
+    background-color: rgb(10, 10, 10);
+    width: 36vw;
+    height: 20vw;
+    border: none;
+    font-family: Geologica;
+    color: white;
+    margin-left: -1vw;
+}
+</style>
+
+ <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCWxefvAHiYxd5cmosgkRNEa8CCsHFPGDI",
+      authDomain: "tapmeery.firebaseapp.com",
+      databaseURL: "https://tapmeery-default-rtdb.firebaseio.com",
+      projectId: "tapmeery",
+      storageBucket: "tapmeery.firebasestorage.app",
+      messagingSenderId: "349575034866",
+      appId: "1:349575034866:web:38ec17b6617046e9969d6b",
+      measurementId: "G-E8B1NPDQF1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+
+    const db = getDatabase(app);
+    const leaderboardBody = document.getElementById("leaderboard-body");
+
+    // Получаем данные из Firebase и обновляем таблицу
+    onValue(ref(db, 'counts/'), (snapshot) => {
+      leaderboardBody.innerHTML = ''; // Очищаем таблицу
+
+      // Сортируем данные по количеству лайков в обратном порядке
+      const sortedCounts = Object.entries(snapshot.val()).sort((a, b) => b[1].count - a[1].count);
+
+      // Отображаем данные в таблице
+      sortedCounts.forEach(([userId, count]) => {
+        const row = leaderboardBody.insertRow();
+        const idCell = row.insertCell();
+        const countCell = row.insertCell();
+        idCell.textContent = userId;
+        countCell.textContent = count.count;
+      });
+    });
+</script>
+</body>
+</html>

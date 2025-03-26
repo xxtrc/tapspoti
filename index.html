@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tap</title>
+  <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<body>
+<div style="margin-top: 20vw;" id="likes-container">
+<center>
+    <span class="score" id="count"><b>0</b></span><br>
+    <button class="like" id="like"><center><img class="tap" src="https://i.postimg.cc/m2LgHckR/istockphoto-1215337728-612x612.jpg"></button>
+
+        <div class="bar">
+            <a href="task.html">
+              <button class="task">Task</button>
+            </a>
+            <a href="index.html">
+              <img src="https://i.postimg.cc/m2LgHckR/istockphoto-1215337728-612x612.jpg" width="50px" style="position: absolute; margin-top: -5vw; margin-left: 8vw;">
+                <button class="game"><b>Game</b></button>
+            </a>
+            <a href="leader.html">
+                <button class="soon">Leader</button>
+            </a>
+        </div>
+</center>
+</div>
+
+<style>
+body {
+    background-color : black;
+    touch-action:  none;
+    overflow: hidden;
+}
+.score {
+    font-family: Geologica;
+    color: white;
+    font-size: 36px;
+}
+.like {
+    background: none;
+    margin-top: 20%;
+    border: none;
+}
+.tap:active {
+    transform: translateY(7px);
+}
+.tap {
+    width: 320px;
+}
+.bar {
+    background-color: rgb(0, 0, 0);
+    bottom: 0;
+    width: 150%;
+    height: 80px;
+    position: fixed;
+    margin-left: -19px;
+}
+.task {
+    background-color: rgb(0, 0, 0);
+    width: 33vw;
+    height: 20vw;
+    border: none;
+    font-family: Geologica;
+    color: white;
+    margin-left: -45vw;
+}
+.game {
+    background-color: rgb(0, 0, 0);
+    width: 33vw;
+    height:25vw;
+    border: none;
+    font-family: Geologica;
+    color: white;
+    margin-left: -2vw;
+}
+.soon{
+    background-color: rgb(0, 0, 0);
+    width: 36vw;
+    height: 20vw;
+    border: none;
+    font-family: Geologica;
+    color: white;
+    margin-left: -1vw;
+}
+hr {
+  position: relative;
+  margin-top: -2vw;
+}
+</style>
+
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyCWxefvAHiYxd5cmosgkRNEa8CCsHFPGDI",
+      authDomain: "tapmeery.firebaseapp.com",
+      databaseURL: "https://tapmeery-default-rtdb.firebaseio.com",
+      projectId: "tapmeery",
+      storageBucket: "tapmeery.firebasestorage.app",
+      messagingSenderId: "349575034866",
+      appId: "1:349575034866:web:38ec17b6617046e9969d6b",
+      measurementId: "G-E8B1NPDQF1"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    
+    const db = getDatabase(app);
+    const likeButton = document.getElementById("like");
+    const likeCount = document.getElementById("count");
+    
+    function updateLikeCount() {
+      let likes = parseInt(likeCount.textContent);
+      likeCount.textContent = likes;
+    }
+    
+    // Получаем или генерируем UID при загрузке страницы
+    let userId;
+    function getOrCreateUserId() {
+      if (localStorage.getItem('userId')) {
+        userId = localStorage.getItem('userId');
+      } else {
+        userId = prompt("Введите Имя", "");
+        localStorage.setItem('userId', userId);
+      }
+      return userId;
+    }
+    
+    // Обработчик клика на кнопку лайка
+    likeButton.addEventListener("click", () => {
+      userId = getOrCreateUserId(); // Получаем или генерируем UID
+    
+      // Увеличиваем счетчик лайков
+      let likes = parseInt(likeCount.textContent);
+      likes++;
+      likeCount.textContent = likes;
+    
+      // Сохраняем лайк в Firebase, используя ID пользователя
+      set(ref(db, `counts/${userId}`), {
+        count: likes
+      });
+    });
+    
+    // Получаем значение счетчика лайков из Firebase при загрузке страницы
+    userId = getOrCreateUserId(); // Получаем или генерируем UID
+    get(ref(db, `counts/${userId}`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        likeCount.textContent = data.count;
+      } else {
+        console.log('No data available');
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+    
+    // Функция для генерации UUID (уникального идентификатора)
+    function generateUUID() {
+  const randomNumber = Math.floor(Math.random() * 500); // Generates a random integer between 0 and 499 (inclusive)
+  return `Duck${randomNumber}`;
+}
+// Example usage:
+console.log(generateUUID()); // Output (example): Duck237
+console.log(generateUUID()); // Output (example): Duck49
+    </script>
+    
+</body>
+</html>
